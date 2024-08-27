@@ -1,0 +1,9 @@
+run = "sh startup.sh"
+hidden = ["startup.sh", "sql_data", ".tutorial"]
+
+[nix]
+channel = "stable-22_11"
+
+[[ports]]
+localPort = 8000
+externalPort = 80
