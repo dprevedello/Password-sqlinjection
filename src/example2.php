@@ -42,10 +42,10 @@
             </ul>
 
             <div class="d-flex align-items-center">
-              <a class="nav-link" href="adminer.php" target="_blank">
-                <button type="button" class="btn btn-info me-3">Adminer</button>
+              <a class="nav-link" href="/pma/" target="_blank">
+                <button type="button" class="btn btn-info me-3">phpMyAdmin</button>
               </a>
-              <a class="nav-link" href="init.php">
+              <a class="nav-link" href="reset.php">
                 <button type="button" class="btn btn-primary me-3">Reset DB</button>
               </a>
             </div>
