@@ -1,20 +1,20 @@
 services:
 
   db:
-    image: mysql:8.0
+    image: mariadb:11
     container_name: sql_injection_db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${MYSQL_DATABASE}
+      MARIADB_USER: ${MYSQL_USER}
+      MARIADB_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql
     networks:
       - sql_injection_net
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -29,9 +29,7 @@ services:
       db_pass: ${MYSQL_PASSWORD}
       db_name: ${MYSQL_DATABASE}
     volumes:
-      - ../src:/var/www/html
-    ports:
-      - "8080:80"
+      - ./src:/var/www/html
     depends_on:
       db:
         condition: service_healthy
@@ -47,16 +45,30 @@ services:
       PMA_USER: ${MYSQL_USER}
       PMA_PASSWORD: ${MYSQL_PASSWORD}
       UPLOAD_LIMIT: 64M
-    ports:
-      - "8081:80"
     depends_on:
       db:
         condition: service_healthy
     networks:
       - sql_injection_net
 
+  nginx:
+    build: ./nginx
+    container_name: sql_injection_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - nginx_certs:/etc/nginx/certs
+    depends_on:
+      - php
+      - phpmyadmin
+    networks:
+      - sql_injection_net
+
 volumes:
   db_data:
+  nginx_certs:
 
 networks:
   sql_injection_net:

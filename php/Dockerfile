@@ -1,7 +1,8 @@
 FROM php:8.2-apache
 
-# Installa estensione mysqli
-RUN docker-php-ext-install mysqli && docker-php-ext-enable mysqli
+# Installa mysqli e PDO con driver MySQL/MariaDB
+RUN docker-php-ext-install mysqli pdo pdo_mysql \
+    && docker-php-ext-enable mysqli pdo pdo_mysql
 
 # Abilita mod_rewrite (utile in generale)
 RUN a2enmod rewrite
