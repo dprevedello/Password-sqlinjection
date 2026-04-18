@@ -3,7 +3,7 @@ services:
   db:
     image: mariadb:11
     container_name: sql_injection_db
-    restart: unless-stopped
+    restart: on-failure:5
     environment:
       MARIADB_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MARIADB_DATABASE: ${MYSQL_DATABASE}
@@ -13,17 +13,13 @@ services:
       - db_data:/var/lib/mysql
     networks:
       - sql_injection_net
-    healthcheck:
-      test: ["CMD-SHELL", "mariadb-admin ping -h localhost -u root -p\"$MARIADB_ROOT_PASSWORD\" --silent"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
 
   php:
-    build: ./php
+    build:
+      context: .
+      dockerfile: php/Dockerfile
     container_name: sql_injection_php
-    restart: unless-stopped
+    restart: on-failure
     environment:
       db_host: db
       db_user: ${MYSQL_USER}
@@ -32,23 +28,21 @@ services:
     volumes:
       - ./src:/var/www/html
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     networks:
       - sql_injection_net
 
   phpmyadmin:
     image: phpmyadmin:latest
     container_name: sql_injection_phpmyadmin
-    restart: unless-stopped
+    restart: on-failure
     environment:
       PMA_HOST: db
       PMA_USER: ${MYSQL_USER}
       PMA_PASSWORD: ${MYSQL_PASSWORD}
       UPLOAD_LIMIT: 64M
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     networks:
       - sql_injection_net
 
