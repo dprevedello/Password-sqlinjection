@@ -279,11 +279,16 @@ else
 fi
 
 info "Avvio dei container con --build..."
-# newgrp esegue il blocco nel contesto del gruppo docker appena aggiunto,
-# senza richiedere una nuova sessione di terminale
-newgrp docker << 'NEWGRP'
-docker compose up --build -d
-NEWGRP
+
+# Carica le variabili dal .env nell'ambiente corrente
+set -a
+# shellcheck source=.env
+. ./.env
+set +a
+
+# sg esegue il comando direttamente nel gruppo docker senza aprire
+# una shell interattiva, a differenza di newgrp che blocca lo script
+sg docker -c "docker compose up --build -d"
 
 # -----------------------------------------------------------------------------
 # Riepilogo
@@ -297,9 +302,7 @@ docker --version
 docker compose version
 echo ""
 info "Stato dei container:"
-newgrp docker << 'NEWGRP'
-docker compose ps
-NEWGRP
+sg docker -c "docker compose ps"
 echo ""
 info "L'ambiente è raggiungibile su:"
 echo "    https://localhost          → Sito demo"
@@ -308,6 +311,6 @@ echo ""
 echo -e "${YELLOW}[!]${NC} Il certificato SSL è self-signed: il browser mostrerà un avviso."
 echo -e "${YELLOW}[!]${NC} Accetta l'eccezione per procedere."
 echo ""
-echo -e "${YELLOW}[!]${NC} IMPORTANTE: per usare Docker senza sudo nelle prossime sessioni"
-echo -e "${YELLOW}[!]${NC} apri un nuovo terminale oppure esegui: newgrp docker"
+echo -e "${YELLOW}[!]${NC} NOTA: il gruppo docker è attivo nelle nuove sessioni di terminale."
+echo -e "${YELLOW}[!]${NC} Per usarlo subito nella sessione corrente: newgrp docker"
 echo ""
