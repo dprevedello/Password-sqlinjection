@@ -80,10 +80,9 @@ Clicca su **"Sì, resetta il database"** per creare le tabelle e popolarle con i
 | Servizio    | URL                                    | Descrizione                        |
 |-------------|----------------------------------------|------------------------------------|
 | 🌐 Sito demo  | `https://[server_URL]`           | I cinque esempi interattivi        |
-| 🛠️ phpMyAdmin | `https://pma.[server_URL]`           | Ispezione diretta del database     |
+| 🛠️ phpMyAdmin | `https://[server_URL]/pma/`           | Ispezione diretta del database     |
 
 > 🔒 Il certificato è **self-signed**: il browser mostrerà un avviso di sicurezza alla prima apertura. Accetta l'eccezione per procedere (comportamento normale in locale).
-> Per accedere a phpMyAdmin via `https://pma.localhost`, aggiungi al file hosts: `127.0.0.1  pma.localhost`
 
 ### 6 — Fermare l'ambiente
 
