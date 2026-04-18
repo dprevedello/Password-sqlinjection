@@ -14,7 +14,7 @@ services:
     networks:
       - sql_injection_net
     healthcheck:
-      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      test: ["CMD-SHELL", "mariadb-admin ping -h localhost -u root -p\"$MARIADB_ROOT_PASSWORD\" --silent"]
       interval: 10s
       timeout: 5s
       retries: 10
