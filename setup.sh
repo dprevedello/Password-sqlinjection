@@ -48,17 +48,37 @@ esac
 info "Distribuzione rilevata: ${PRETTY_NAME}"
 
 # -----------------------------------------------------------------------------
-# 1. Rimuovi eventuali versioni precedenti di Docker
+# 1. Rimuovi completamente eventuali versioni precedenti di Docker
 # -----------------------------------------------------------------------------
 info "Rimozione di eventuali installazioni precedenti di Docker..."
-sudo apt-get remove -y \
+
+# Ferma i servizi se attivi
+sudo systemctl stop docker docker.socket containerd 2>/dev/null || true
+
+# Rimuovi tutti i pacchetti Docker esistenti (sia docker.io che docker-ce)
+sudo apt-get purge -y \
     docker \
     docker-engine \
     docker.io \
+    docker-ce \
+    docker-ce-cli \
+    docker-ce-rootless-extras \
     containerd \
+    containerd.io \
     runc \
     docker-compose \
+    docker-buildx-plugin \
+    docker-compose-plugin \
     2>/dev/null || true
+
+sudo apt-get autoremove -y 2>/dev/null || true
+
+# Rimuovi file residui che potrebbero causare conflitti al riavvio di dockerd
+sudo rm -rf /var/lib/docker
+sudo rm -rf /var/lib/containerd
+sudo rm -f /var/run/docker.sock
+sudo rm -f /etc/docker/daemon.json
+
 log "Pulizia completata."
 
 # -----------------------------------------------------------------------------
@@ -111,9 +131,65 @@ log "Docker installato."
 # 6. Abilita e avvia il servizio Docker
 # -----------------------------------------------------------------------------
 info "Abilitazione servizio Docker..."
-sudo systemctl enable docker
-sudo systemctl start docker
-log "Servizio Docker avviato."
+
+start_docker_systemd() {
+    # Reset di eventuali stati di errore precedenti
+    sudo systemctl reset-failed docker.service docker.socket 2>/dev/null || true
+
+    # Abilita entrambe le unit
+    sudo systemctl enable docker.socket docker.service 2>/dev/null
+
+    # Avvia prima il socket (socket activation), poi il servizio
+    sudo systemctl start docker.socket 2>/dev/null || true
+    sudo systemctl start docker.service 2>/dev/null
+
+    # Verifica che docker risponda effettivamente
+    for i in $(seq 1 15); do
+        if sudo docker info &>/dev/null 2>&1; then
+            return 0
+        fi
+        sleep 1
+    done
+    return 1
+}
+
+start_docker_direct() {
+    # Fallback: avvio diretto di dockerd senza systemd
+    if sudo docker info &>/dev/null 2>&1; then
+        log "Docker è già in esecuzione."
+        return 0
+    fi
+
+    info "Avvio dockerd in background (fallback senza systemd)..."
+    sudo dockerd &>/tmp/dockerd.log &
+    DOCKERD_PID=$!
+
+    for i in $(seq 1 30); do
+        if sudo docker info &>/dev/null 2>&1; then
+            log "dockerd avviato (PID: $DOCKERD_PID)."
+            return 0
+        fi
+        sleep 1
+    done
+
+    error "dockerd non risponde dopo 30s. Log: /tmp/dockerd.log"
+}
+
+SYSTEMD_OK=false
+if command -v systemctl &>/dev/null && systemctl is-system-running 2>/dev/null | grep -qE "running|degraded"; then
+    if start_docker_systemd; then
+        log "Servizio Docker avviato tramite systemd."
+        SYSTEMD_OK=true
+    else
+        warning "systemd presente ma avvio Docker fallito, provo avvio diretto..."
+    fi
+fi
+
+if [ "$SYSTEMD_OK" = false ]; then
+    start_docker_direct
+    warning "Docker avviato in modalità diretta: non si riavvierà automaticamente al reboot."
+    warning "Per riavviarlo in futuro esegui: sudo dockerd &"
+fi
 
 # -----------------------------------------------------------------------------
 # 7. Permetti all'utente corrente di eseguire Docker senza sudo
