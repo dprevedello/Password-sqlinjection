@@ -16,6 +16,11 @@ Questo progetto è un ambiente didattico per esplorare in modo pratico gli attac
 ├── .env.example             # Template variabili d'ambiente
 ├── .gitignore
 ├── php/
+│   └── Dockerfile           # Immagine PHP 8.2 + Apache + mysqli + PDO
+├── nginx/
+│   ├── Dockerfile           # Immagine nginx:alpine con openssl
+│   ├── nginx.conf           # Virtual host HTTP→HTTPS e proxy phpMyAdmin
+│   └── entrypoint.sh        # Genera il certificato self-signed al primo avvio
 │   └── Dockerfile           # Immagine PHP 8.2 + Apache + mysqli
 └── src/
     ├── init.sql             # Crea e popola tutte le tabelle del demo
@@ -63,7 +68,7 @@ docker compose up -d --build
 Apri il browser e vai su:
 
 ```
-http://[server_URL]:8080/reset.php
+https://[server_URL]/reset.php
 ```
 
 Clicca su **"Sì, resetta il database"** per creare le tabelle e popolarle con i dati di esempio.
@@ -74,8 +79,11 @@ Clicca su **"Sì, resetta il database"** per creare le tabelle e popolarle con i
 
 | Servizio    | URL                                    | Descrizione                        |
 |-------------|----------------------------------------|------------------------------------|
-| 🌐 Sito demo  | `http://[server_URL]:8080`           | I cinque esempi interattivi        |
-| 🛠️ phpMyAdmin | `http://[server_URL]:8081`           | Ispezione diretta del database     |
+| 🌐 Sito demo  | `https://[server_URL]`           | I cinque esempi interattivi        |
+| 🛠️ phpMyAdmin | `https://pma.[server_URL]`           | Ispezione diretta del database     |
+
+> 🔒 Il certificato è **self-signed**: il browser mostrerà un avviso di sicurezza alla prima apertura. Accetta l'eccezione per procedere (comportamento normale in locale).
+> Per accedere a phpMyAdmin via `https://pma.localhost`, aggiungi al file hosts: `127.0.0.1  pma.localhost`
 
 ### 6 — Fermare l'ambiente
 
