@@ -1,0 +1,63 @@
+services:
+
+  db:
+    image: mysql:8.0
+    container_name: sql_injection_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - sql_injection_net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  php:
+    build: ./php
+    container_name: sql_injection_php
+    restart: unless-stopped
+    environment:
+      db_host: db
+      db_user: ${MYSQL_USER}
+      db_pass: ${MYSQL_PASSWORD}
+      db_name: ${MYSQL_DATABASE}
+    volumes:
+      - ../src:/var/www/html
+    ports:
+      - "8080:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - sql_injection_net
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: sql_injection_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db
+      PMA_USER: ${MYSQL_USER}
+      PMA_PASSWORD: ${MYSQL_PASSWORD}
+      UPLOAD_LIMIT: 64M
+    ports:
+      - "8081:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - sql_injection_net
+
+volumes:
+  db_data:
+
+networks:
+  sql_injection_net:
+    driver: bridge

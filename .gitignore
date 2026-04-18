@@ -1,0 +1,11 @@
+# Variabili d'ambiente (contengono credenziali)
+.env
+
+# Dati persistenti del database
+docker/mysql/data/
+
+# Editor e OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
