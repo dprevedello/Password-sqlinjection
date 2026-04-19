@@ -77,9 +77,12 @@
                         <label class="form-label" for="username">Nome utente</label>
                       </div>
     
-                      <div class="form-outline mb-4">
+                      <div class="form-outline mb-4 password-wrapper">
                         <input type="password" id="password" name="password" class="form-control" />
                         <label class="form-label" for="password">Password</label>
+                        <button type="button" class="password-toggle" onclick="togglePassword()" tabindex="-1" aria-label="Mostra/nascondi password">
+                          <i id="password-eye" class="fas fa-eye"></i>
+                        </button>
                       </div>
     
                       <div class="text-center pt-1 mb-5 pb-1">

@@ -237,3 +237,21 @@ document.addEventListener("DOMContentLoaded", () => {
   checkPageChange();
   applyDocenteMode();
 });
+
+// =============================================================================
+// Toggle visibilità password
+// =============================================================================
+
+function togglePassword() {
+  const input = document.getElementById("password");
+  const eye   = document.getElementById("password-eye");
+  if (!input || !eye) return;
+
+  if (input.type === "password") {
+    input.type = "text";
+    eye.classList.replace("fa-eye", "fa-eye-slash");
+  } else {
+    input.type = "password";
+    eye.classList.replace("fa-eye-slash", "fa-eye");
+  }
+}
