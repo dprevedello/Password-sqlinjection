@@ -11,6 +11,7 @@ services:
       MARIADB_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql
+      - ./mariadb:/docker-entrypoint-initdb.d:ro
     networks:
       - sql_injection_net
 
