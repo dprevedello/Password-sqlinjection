@@ -35,7 +35,10 @@ Questo progetto è un ambiente didattico per esplorare in modo pratico gli attac
 └── src/                          # Sorgenti PHP del sito
     ├── db.php                    # Funzioni di accesso al database
     ├── reset.php                 # Pagina web per reinizializzare il database
-    ├── style.css
+    ├── style.css                 # Stili globali
+    ├── payloads.js               # Modalità Docente: payload e logica toggle
+    ├── summary.php               # Pagina riepilogo comparativo + calcolatore hash
+    ├── summary.js                # Logica tabella comparativa e calcolatore hash
     ├── index.php                 # Esempio 1 – Password in chiaro, SQLi base
     ├── example2.php              # Esempio 2 – Hash MD5, ancora vulnerabile
     ├── example3.php              # Esempio 3 – SHA2 + salt, ancora vulnerabile
