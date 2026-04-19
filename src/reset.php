@@ -27,6 +27,7 @@
               <li class="nav-item"><a class="nav-link" href="example3.php">Esempio 3</a></li>
               <li class="nav-item"><a class="nav-link" href="example4.php">Esempio 4</a></li>
               <li class="nav-item"><a class="nav-link" href="example5.php">Esempio 5</a></li>
+              <li class="nav-item"><a class="nav-link" href="summary.php">Riepilogo</a></li>
             </ul>
             <div class="d-flex align-items-center">
               <a class="nav-link" href="/pma/" target="_blank">
