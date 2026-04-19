@@ -26,13 +26,14 @@ body {
         border-bottom-right-radius: .3rem;
     }
 }
+
 /* =============================================================================
    Modalità Docente
    ============================================================================= */
 
 .docente-panel {
-    background: rgba(0, 0, 0, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: #1a1a2e;
+    border: 2px solid #f0a500;
     border-radius: .5rem;
     padding: 1rem;
     margin-top: 1rem;
@@ -40,23 +41,24 @@ body {
 
 .docente-panel-header {
     font-size: .95rem;
-    font-weight: 600;
-    color: #fff;
+    font-weight: 700;
+    color: #f0a500;
     margin-bottom: .75rem;
     padding-bottom: .5rem;
-    border-bottom: 1px solid rgba(255,255,255,0.25);
+    border-bottom: 1px solid #f0a500;
 }
 
 .docente-group {
-    margin-bottom: .75rem;
+    margin-bottom: .85rem;
 }
 
 .docente-group-label {
-    font-size: .75rem;
+    font-size: .72rem;
     text-transform: uppercase;
-    letter-spacing: .05em;
-    color: rgba(255,255,255,0.6);
-    margin-bottom: .35rem;
+    letter-spacing: .06em;
+    color: #adb5bd;
+    margin-bottom: .4rem;
+    font-weight: 600;
 }
 
 .docente-entry {
@@ -64,24 +66,24 @@ body {
     flex-wrap: wrap;
     align-items: baseline;
     gap: .4rem;
-    background: rgba(0,0,0,0.2);
-    border: 1px solid rgba(255,255,255,0.15);
+    background: #16213e;
+    border: 1px solid #2d3561;
     border-radius: .35rem;
-    padding: .4rem .6rem;
-    margin-bottom: .3rem;
+    padding: .45rem .65rem;
+    margin-bottom: .35rem;
     cursor: pointer;
-    transition: background .15s;
+    transition: border-color .15s, background .15s;
 }
 
 .docente-entry:hover {
-    background: rgba(0,0,0,0.4);
-    border-color: rgba(255,255,255,0.4);
+    background: #0f3460;
+    border-color: #f0a500;
 }
 
 .badge-target {
     font-size: .65rem;
     font-weight: 700;
-    padding: .15em .45em;
+    padding: .15em .5em;
     border-radius: .25rem;
     text-transform: uppercase;
     letter-spacing: .04em;
@@ -99,19 +101,21 @@ body {
 }
 
 .docente-desc {
-    font-size: .8rem;
-    color: rgba(255,255,255,0.85);
+    font-size: .82rem;
+    color: #e9ecef;
     flex: 1;
     min-width: 120px;
 }
 
 .docente-code {
     font-size: .75rem;
-    background: rgba(0,0,0,0.35);
-    color: #a8ff78;
-    padding: .1em .4em;
+    background: #0d1117;
+    color: #56d364;
+    padding: .2em .5em;
     border-radius: .25rem;
+    border: 1px solid #2d3561;
     word-break: break-all;
     width: 100%;
-    margin-top: .1rem;
+    margin-top: .2rem;
+    font-family: 'Courier New', monospace;
 }

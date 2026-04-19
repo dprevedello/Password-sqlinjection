@@ -120,7 +120,9 @@ const PAYLOADS = {
 // Logica toggle e rendering
 // =============================================================================
 
-const STORAGE_KEY = "docente_mode";
+const STORAGE_KEY     = "docente_mode";
+const STORAGE_PAGE    = "docente_last_page";
+const FAKE_USERNAME   = "studente";
 
 function isDocenteMode() {
   return localStorage.getItem(STORAGE_KEY) === "1";
@@ -130,19 +132,42 @@ function setDocenteMode(active) {
   localStorage.setItem(STORAGE_KEY, active ? "1" : "0");
 }
 
-// Inserisce il payload nel campo corretto e triggera gli eventi MDB
+function currentPage() {
+  return window.location.pathname.split("/").pop() || "index.php";
+}
+
+// Disattiva automaticamente la modalità se si è navigato su una pagina diversa
+function checkPageChange() {
+  const lastPage = localStorage.getItem(STORAGE_PAGE);
+  const page     = currentPage();
+  if (lastPage && lastPage !== page) {
+    setDocenteMode(false);
+  }
+  localStorage.setItem(STORAGE_PAGE, page);
+}
+
+// Inserisce il payload nel campo corretto + sempre un username fittizio
 function insertPayload(target, value) {
-  const field = document.getElementById(target === "username" ? "username" : "password");
+  const usernameField = document.getElementById("username");
+  const passwordField = document.getElementById("password");
+
+  // Popola sempre lo username con un valore fittizio per evitare
+  // la validazione HTML5 "campo obbligatorio"
+  if (usernameField && usernameField.value.trim() === "") {
+    usernameField.value = FAKE_USERNAME;
+    usernameField.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+
+  const field = target === "username" ? usernameField : passwordField;
   if (!field) return;
   field.value = value;
-  // Trigger MDB floating label update
   field.dispatchEvent(new Event("input", { bubbles: true }));
   field.focus();
 }
 
 // Costruisce il pannello dei payload per la pagina corrente
 function buildPayloadPanel() {
-  const page = window.location.pathname.split("/").pop() || "index.php";
+  const page = currentPage();
   const data = PAYLOADS[page];
   if (!data) return null;
 
@@ -159,7 +184,7 @@ function buildPayloadPanel() {
     html += `<div class="docente-group">
       <div class="docente-group-label">${group.label}</div>`;
     for (const entry of group.entries) {
-      const escapedValue = entry.value.replace(/'/g, "\\'");
+      const escapedValue = entry.value.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
       const targetLabel = group.target === "username"
         ? '<span class="badge-target badge-username">username</span>'
         : '<span class="badge-target badge-password">password</span>';
@@ -191,18 +216,14 @@ function applyDocenteMode() {
       : "btn btn-outline-warning btn-sm me-3";
   }
 
-  // Rimuovi pannello esistente se presente
   const existing = document.getElementById("docente-panel");
   if (existing) existing.remove();
 
   if (active) {
     const panel = buildPayloadPanel();
     if (panel) {
-      // Inserisci dopo la tabella credenziali
       const tableResponsive = document.querySelector(".table-responsive");
-      if (tableResponsive) {
-        tableResponsive.appendChild(panel);
-      }
+      if (tableResponsive) tableResponsive.appendChild(panel);
     }
   }
 }
@@ -212,4 +233,7 @@ function toggleDocente() {
   applyDocenteMode();
 }
 
-document.addEventListener("DOMContentLoaded", applyDocenteMode);
+document.addEventListener("DOMContentLoaded", () => {
+  checkPageChange();
+  applyDocenteMode();
+});
