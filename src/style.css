@@ -150,3 +150,132 @@ body {
 .password-toggle:focus {
     outline: none;
 }
+
+/* =============================================================================
+   Summary page – Tabella comparativa
+   ============================================================================= */
+
+.summary-table td, .summary-table th {
+    vertical-align: middle;
+    padding: .6rem .8rem;
+}
+
+.badge-legend {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+.badge-red    { background: #dc3545; }
+.badge-yellow { background: #ffc107; }
+.badge-green  { background: #198754; }
+
+.summary-popover {
+    position: absolute;
+    z-index: 9999;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: .5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,.15);
+    padding: 1rem 1.2rem;
+    max-width: 360px;
+    min-width: 260px;
+}
+
+.summary-popover-close {
+    position: absolute;
+    top: .5rem;
+    right: .6rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6c757d;
+    font-size: .85rem;
+}
+
+.popover-title {
+    font-weight: 700;
+    font-size: .9rem;
+    margin-bottom: .4rem;
+    padding-right: 1.2rem;
+}
+
+.popover-badge {
+    display: inline-block;
+    font-size: .72rem;
+    font-weight: 600;
+    padding: .2em .6em;
+    border-radius: 1rem;
+    margin-bottom: .5rem;
+}
+.popover-green  { background: #d1f2d1; color: #1a7f1a; }
+.popover-yellow { background: #fff3cd; color: #856404; }
+.popover-red    { background: #f8d7da; color: #842029; }
+
+.popover-text {
+    font-size: .85rem;
+    color: #343a40;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* =============================================================================
+   Summary page – Calcolatore hash
+   ============================================================================= */
+
+.hash-table td, .hash-table th {
+    vertical-align: middle;
+    padding: .55rem .75rem;
+}
+
+.hash-algo-badge {
+    display: inline-block;
+    font-size: .72rem;
+    font-weight: 700;
+    padding: .25em .6em;
+    border-radius: .3rem;
+    text-align: center;
+    min-width: 70px;
+}
+.badge-md5       { background: #f8d7da; color: #842029; }
+.badge-sha256    { background: #fff3cd; color: #856404; }
+.badge-sha256salt{ background: #cce5ff; color: #004085; }
+.badge-bcrypt    { background: #d1f2d1; color: #1a7f1a; }
+
+.hash-value {
+    font-size: .72rem;
+    word-break: break-all;
+    color: #343a40;
+}
+
+.hash-len {
+    font-size: .65rem;
+    color: #6c757d;
+}
+
+.hash-eq {
+    font-size: .78rem;
+    font-weight: 600;
+    padding: .2em .5em;
+    border-radius: .25rem;
+}
+.hash-eq-yes { background: #d1f2d1; color: #1a7f1a; }
+.hash-eq-no  { background: #f8d7da; color: #842029; }
+
+.hash-observations {
+    margin-top: 1rem;
+    border-radius: .4rem;
+    overflow: hidden;
+}
+
+.obs-item {
+    padding: .6rem .9rem;
+    font-size: .85rem;
+    line-height: 1.5;
+    border-left: 4px solid transparent;
+}
+.obs-warning { background: #fff3cd; border-color: #ffc107; color: #6b4f00; }
+.obs-ok      { background: #d1f2d1; border-color: #198754; color: #0a4c1e; }
+.obs-info    { background: #cce5ff; border-color: #0d6efd; color: #003380; }
