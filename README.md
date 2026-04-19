@@ -10,28 +10,37 @@ Questo progetto è un ambiente didattico per esplorare in modo pratico gli attac
 
 ## 📁 Struttura del repository
 
+
 ```
 .
-├── docker-compose.yml       # Orchestrazione dei container
-├── .env.example             # Template variabili d'ambiente
+├── docker-compose.yml            # Orchestrazione dei 4 container
+├── setup.sh                      # Script di installazione e avvio automatico
+├── .env.example                  # Template variabili d'ambiente
 ├── .gitignore
-├── php/
-│   └── Dockerfile           # Immagine PHP 8.2 + Apache + mysqli + PDO
-├── nginx/
-│   ├── Dockerfile           # Immagine nginx:alpine con openssl
-│   ├── nginx.conf           # Virtual host HTTP→HTTPS e proxy phpMyAdmin
-│   └── entrypoint.sh        # Genera il certificato self-signed al primo avvio
-│   └── Dockerfile           # Immagine PHP 8.2 + Apache + mysqli
-└── src/
-    ├── init.sql             # Crea e popola tutte le tabelle del demo
-    ├── db.php               # Funzioni di accesso al database
-    ├── reset.php            # Pagina web per reinizializzare il database
+│
+├── mariadb/                      # Script di inizializzazione database
+│   ├── 01_schema.sql             # Crea tabelle e popola users_ex1, users_ex2
+│   └── 02_seed.sh                # Crea saltFunction e popola users_ex3
+│
+├── php/                          # Container PHP + Apache
+│   ├── Dockerfile                # PHP 8.2 + Apache + mysqli + PDO
+│   ├── entrypoint.sh             # Esegue init_bcrypt.php poi avvia Apache
+│   └── init_bcrypt.php           # Popola users_ex4 con bcrypt al primo avvio
+│
+├── nginx/                        # Container reverse proxy
+│   ├── Dockerfile                # nginx:alpine + openssl
+│   ├── nginx.conf                # HTTP→HTTPS redirect, proxy app e /pma/
+│   └── entrypoint.sh             # Genera certificato self-signed al primo avvio
+│
+└── src/                          # Sorgenti PHP del sito
+    ├── db.php                    # Funzioni di accesso al database
+    ├── reset.php                 # Pagina web per reinizializzare il database
     ├── style.css
-    ├── index.php            # Esempio 1 – SQL injection base
-    ├── example2.php         # Esempio 2 – Hash MD5, ancora vulnerabile
-    ├── example3.php         # Esempio 3 – SHA2 + salt, ancora vulnerabile
-    ├── example4.php         # Esempio 4 – Prepared statements + SHA2/salt
-    └── example5.php         # Esempio 5 – Prepared statements + bcrypt ✅
+    ├── index.php                 # Esempio 1 – Password in chiaro, SQLi base
+    ├── example2.php              # Esempio 2 – Hash MD5, ancora vulnerabile
+    ├── example3.php              # Esempio 3 – SHA2 + salt, ancora vulnerabile
+    ├── example4.php              # Esempio 4 – Prepared statements + SHA2/salt
+    └── example5.php              # Esempio 5 – Prepared statements + bcrypt ✅
 ```
 
 ---
