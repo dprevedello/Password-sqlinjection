@@ -120,9 +120,9 @@ const PAYLOADS = {
 // Logica toggle e rendering
 // =============================================================================
 
-const STORAGE_KEY     = "docente_mode";
-const STORAGE_PAGE    = "docente_last_page";
-const FAKE_USERNAME   = "studente";
+const STORAGE_KEY   = "docente_mode";
+const STORAGE_PAGE  = "docente_last_page";
+const FAKE_USERNAME = "studente";
 
 function isDocenteMode() {
   return localStorage.getItem(STORAGE_KEY) === "1";
@@ -158,18 +158,15 @@ function insertPayload(target, value) {
   }
 
   if (target === "username") {
-    // Payload nello username: pulisce la password e mette un valore neutro
+    // Payload nello username: pulisce la password con valore neutro
     fill(usernameField, value);
     fill(passwordField, "password");
   } else {
-    // Payload nella password: mette uno username fittizio se vuoto
-    if (usernameField && usernameField.value.trim() === "") {
-      fill(usernameField, FAKE_USERNAME);
-    }
+    // Payload nella password: sovrascrive sempre lo username con valore fittizio
+    fill(usernameField, FAKE_USERNAME);
     fill(passwordField, value);
   }
 
-  // Mette il focus sul campo che contiene il payload
   const field = target === "username" ? usernameField : passwordField;
   if (field) field.focus();
 }
@@ -193,12 +190,14 @@ function buildPayloadPanel() {
     html += `<div class="docente-group">
       <div class="docente-group-label">${group.label}</div>`;
     for (const entry of group.entries) {
-      const escapedValue = entry.value.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
       const targetLabel = group.target === "username"
         ? '<span class="badge-target badge-username">username</span>'
         : '<span class="badge-target badge-password">password</span>';
+      // data-attributes evitano problemi di escaping con apici/virgolette nei payload
       html += `
-        <div class="docente-entry" onclick="insertPayload('${group.target}', '${escapedValue}')">
+        <div class="docente-entry"
+             data-target="${group.target}"
+             data-value="${entry.value.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}">
           ${targetLabel}
           <span class="docente-desc">${entry.desc}</span>
           <code class="docente-code">${entry.value}</code>
@@ -209,6 +208,14 @@ function buildPayloadPanel() {
 
   html += `</div>`;
   panel.innerHTML = html;
+
+  // Listener delegato sul pannello — legge i data-attributes invece di onclick inline
+  panel.addEventListener("click", (e) => {
+    const entry = e.target.closest(".docente-entry");
+    if (!entry) return;
+    insertPayload(entry.dataset.target, entry.dataset.value);
+  });
+
   return panel;
 }
 
