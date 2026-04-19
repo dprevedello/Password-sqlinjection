@@ -42,6 +42,7 @@
             </ul>
 
             <div class="d-flex align-items-center">
+              <button id="toggle-docente" type="button" onclick="toggleDocente()" class="btn btn-outline-warning btn-sm me-3"><i class="fas fa-chalkboard-teacher me-1"></i>Mostra soluzioni</button>
               <a class="nav-link" href="/pma/" target="_blank">
                 <button type="button" class="btn btn-info me-3">phpMyAdmin</button>
               </a>
@@ -155,6 +156,8 @@
         </div>
       </div>
     </section>
+    <!-- Modalità Docente -->
+    <script src="payloads.js"></script>
     <!-- MDB -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.1.0/mdb.min.js"></script>
   </body>
