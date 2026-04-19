@@ -146,23 +146,32 @@ function checkPageChange() {
   localStorage.setItem(STORAGE_PAGE, page);
 }
 
-// Inserisce il payload nel campo corretto + sempre un username fittizio
+// Inserisce il payload nel campo corretto e popola sempre entrambi i campi
 function insertPayload(target, value) {
   const usernameField = document.getElementById("username");
   const passwordField = document.getElementById("password");
 
-  // Popola sempre lo username con un valore fittizio per evitare
-  // la validazione HTML5 "campo obbligatorio"
-  if (usernameField && usernameField.value.trim() === "") {
-    usernameField.value = FAKE_USERNAME;
-    usernameField.dispatchEvent(new Event("input", { bubbles: true }));
+  function fill(field, val) {
+    if (!field) return;
+    field.value = val;
+    field.dispatchEvent(new Event("input", { bubbles: true }));
   }
 
+  if (target === "username") {
+    // Payload nello username: pulisce la password e mette un valore neutro
+    fill(usernameField, value);
+    fill(passwordField, "password");
+  } else {
+    // Payload nella password: mette uno username fittizio se vuoto
+    if (usernameField && usernameField.value.trim() === "") {
+      fill(usernameField, FAKE_USERNAME);
+    }
+    fill(passwordField, value);
+  }
+
+  // Mette il focus sul campo che contiene il payload
   const field = target === "username" ? usernameField : passwordField;
-  if (!field) return;
-  field.value = value;
-  field.dispatchEvent(new Event("input", { bubbles: true }));
-  field.focus();
+  if (field) field.focus();
 }
 
 // Costruisce il pannello dei payload per la pagina corrente
