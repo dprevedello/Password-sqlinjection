@@ -229,12 +229,17 @@ async function sha256(str) {
 
 // Cache bcrypt per evitare ricalcoli su ogni keystroke
 const bcryptCache = {};
+// bcryptTiming tiene il tempo dell'ultimo calcolo reale (non da cache)
+let bcryptLastRealMs = null;
+
 async function bcryptHash(str) {
   if (bcryptCache[str] !== undefined) return bcryptCache[str];
+  const t0 = performance.now();
   const hash = await new Promise(resolve => {
     // cost 8 per la demo (più veloce di 13 ma ancora dimostrativo)
     dcodeIO.bcrypt.hash(str, 8, (err, h) => resolve(h));
   });
+  bcryptLastRealMs = Math.round(performance.now() - t0);
   bcryptCache[str] = hash;
   return hash;
 }
@@ -287,9 +292,7 @@ async function computeAll() {
 
   clearTimeout(bcryptDebounce);
   bcryptDebounce = setTimeout(async () => {
-    const t0 = performance.now();
     const [bca, bcb] = await Promise.all([a ? bcryptHash(a) : "—", b ? bcryptHash(b) : "—"]);
-    const elapsed = Math.round(performance.now() - t0);
 
     document.getElementById("bcrypt-a").innerHTML  = truncate(bca);
     document.getElementById("bcrypt-b").innerHTML  = truncate(bcb);
@@ -299,9 +302,12 @@ async function computeAll() {
       : "—";
     document.getElementById("bcrypt-eq").innerHTML = bcEq;
 
-    document.getElementById("bcrypt-timing").style.display = "block";
-    document.getElementById("bcrypt-timing-text").textContent =
-      `bcrypt (cost 8): calcolo completato in ${elapsed} ms — a cost 13 (usato nel DB) il tempo sarebbe ~${Math.round(elapsed * Math.pow(2, 13-8))} ms`;
+    // Mostra il tempo solo se c'è stato almeno un calcolo reale (non da cache)
+    if (bcryptLastRealMs !== null) {
+      document.getElementById("bcrypt-timing").style.display = "block";
+      document.getElementById("bcrypt-timing-text").textContent =
+        `bcrypt (cost 8): calcolo completato in ${bcryptLastRealMs} ms — a cost 13 (usato nel DB) il tempo sarebbe ~${Math.round(bcryptLastRealMs * Math.pow(2, 13-8))} ms`;
+    }
 
     updateObservations(a, b, m5a, m5b, ss256a, ss256b);
   }, 600);
